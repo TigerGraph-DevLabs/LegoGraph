@@ -1,0 +1,14 @@
+
+CREATE QUERY legoInformation() FOR GRAPH LegoGraph SYNTAX v2 {
+
+  TYPEDEF TUPLE <year INT, num_parts INT, theme_id INT, theme_name STRING> YEAR_PARTS;
+
+  ListAccum<YEAR_PARTS> @@result;
+
+  Seed = {Year.*};
+
+  Res = SELECT l FROM Seed:s - (LEGO_SET_YEAR:e) - Lego_Set:l - (LEGO_SET_THEME:e1) - Theme:t
+        ACCUM @@result+=YEAR_PARTS(s.year, l.num_parts, t.theme_number, t.theme_name);
+
+  PRINT @@result;
+}

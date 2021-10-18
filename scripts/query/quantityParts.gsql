@@ -1,0 +1,12 @@
+CREATE QUERY quantityParts() FOR GRAPH LegoGraph {
+    TYPEDEF TUPLE <quantity INT, num_parts INT> SPECIAL_INFO;
+    
+    ListAccum<SPECIAL_INFO> @@stuff;
+
+    Seed = {Inventory.*};
+    Res = SELECT l FROM Seed:s -(INVENTORY_LEGO_SET:e)-Lego_Set:l
+        WHERE e.quantity > 0
+        ACCUM @@stuff+=SPECIAL_INFO(e.quantity, l.num_parts);
+
+    PRINT @@stuff;
+}
